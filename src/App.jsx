@@ -3,6 +3,8 @@ import { Sparkles, ExternalLink, TrendingUp, Globe, Newspaper, Info, History } f
 import CurrencyConverter from './components/CurrencyConverter';
 import HistoryChart from './components/HistoryChart';
 import HistoricalComparison from './components/HistoricalComparison';
+import TrendingPairs from './components/TrendingPairs';
+import LiveTicker from './components/LiveTicker';
 import { useRateHistory } from './hooks/useRateHistory';
 
 function App() {
@@ -18,7 +20,7 @@ function App() {
       try {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
-        
+
         if (data && data.currency) {
           // If user is in India, keep USD as base to check against INR.
           // For everywhere else (Dubai, UK etc), set their local currency as base.
@@ -40,6 +42,9 @@ function App() {
 
   // Handle PWA Install Prompt
   useEffect(() => {
+    // Don't show if user already dismissed
+    if (localStorage.getItem('pwa-dismissed') === 'true') return;
+
     const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -53,10 +58,16 @@ function App() {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setShowInstallBtn(false);
-    }
+    setShowInstallBtn(false);
     setDeferredPrompt(null);
+    if (outcome === 'accepted') {
+      localStorage.setItem('pwa-dismissed', 'true');
+    }
+  };
+
+  const handleInstallDismiss = () => {
+    setShowInstallBtn(false);
+    localStorage.setItem('pwa-dismissed', 'true');
   };
 
   const { data: historyData, loading: historyLoading } = useRateHistory(fromCurrency, toCurrency, timeframe);
@@ -70,12 +81,12 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#fcfcfd] dark:bg-gray-950 transition-colors duration-500 selection:bg-blue-100 selection:text-blue-700 font-sans relative">
-      
+
       {/* PWA Install Prompt (Floating popup) */}
       {showInstallBtn && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[100] bg-white/90 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-100 dark:border-gray-700 p-4 rounded-2xl shadow-[0_20px_50px_rgba(37,99,235,0.15)] flex items-center justify-between transition-all duration-500 animate-in slide-in-from-bottom-10">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-blue-600 rounded-xl shadow-lg shadow-blue-200 dark:shadow-none">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[100] bg-white/90 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-100 dark:border-gray-700 p-4 rounded-2xl shadow-[0_20px_50px_rgba(37,99,235,0.15)] flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="p-2.5 bg-blue-600 rounded-xl shadow-lg shadow-blue-200 dark:shadow-none flex-shrink-0">
               <Sparkles className="text-white" size={18} />
             </div>
             <div>
@@ -83,11 +94,18 @@ function App() {
               <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Add to Home Screen</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={handleInstallClick}
-            className="px-4 py-2 bg-gray-900 dark:bg-white hover:bg-black dark:hover:bg-gray-100 text-white dark:text-gray-900 text-[10px] font-black uppercase tracking-[0.1em] rounded-xl transition-all shadow-md active:scale-95"
+            className="px-4 py-2 bg-gray-900 dark:bg-white hover:bg-black dark:hover:bg-gray-100 text-white dark:text-gray-900 text-[10px] font-black uppercase tracking-[0.1em] rounded-xl transition-all shadow-md active:scale-95 flex-shrink-0"
           >
             Get App
+          </button>
+          <button
+            onClick={handleInstallDismiss}
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors flex-shrink-0 p-1"
+            aria-label="Dismiss"
+          >
+            ✕
           </button>
         </div>
       )}
@@ -144,6 +162,9 @@ function App() {
         </div>
       </nav>
 
+      {/* Live Currency Ticker */}
+      <LiveTicker />
+
       <main className="relative z-10 max-w-[1200px] mx-auto px-3 sm:px-6 py-4 sm:py-8 md:py-12">
         {/* Page Heading */}
         <div className="mb-6 sm:mb-12 text-center">
@@ -166,6 +187,17 @@ function App() {
                 setToCurrency={setToCurrency}
               />
             </div>
+          </div>
+
+          {/* Section 1.5: Trending Pairs */}
+          <div className="flex flex-col pt-6 sm:pt-12 border-t border-gray-100 dark:border-gray-900 w-full max-w-4xl mx-auto">
+            <TrendingPairs
+              onSelect={(from, to) => {
+                setFromCurrency(from);
+                setToCurrency(to);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
           </div>
 
           {/* Section 2: Chart (Matched Width) */}
