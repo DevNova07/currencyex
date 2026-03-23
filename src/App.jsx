@@ -9,6 +9,8 @@ function App() {
   const [fromCurrency, setFromCurrency] = useState('USD');
   const [toCurrency, setToCurrency] = useState('INR');
   const [timeframe, setTimeframe] = useState(7);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
 
   // Auto-Detect User Location & Currency
   useEffect(() => {
@@ -36,6 +38,27 @@ function App() {
     detectUserCurrency();
   }, []);
 
+  // Handle PWA Install Prompt
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBtn(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setShowInstallBtn(false);
+    }
+    setDeferredPrompt(null);
+  };
+
   const { data: historyData, loading: historyLoading } = useRateHistory(fromCurrency, toCurrency, timeframe);
 
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -46,7 +69,29 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#fcfcfd] dark:bg-gray-950 transition-colors duration-500 selection:bg-blue-100 selection:text-blue-700 font-sans">
+    <div className="min-h-screen bg-[#fcfcfd] dark:bg-gray-950 transition-colors duration-500 selection:bg-blue-100 selection:text-blue-700 font-sans relative">
+      
+      {/* PWA Install Prompt (Floating popup) */}
+      {showInstallBtn && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-[100] bg-white/90 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-100 dark:border-gray-700 p-4 rounded-2xl shadow-[0_20px_50px_rgba(37,99,235,0.15)] flex items-center justify-between transition-all duration-500 animate-in slide-in-from-bottom-10">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-blue-600 rounded-xl shadow-lg shadow-blue-200 dark:shadow-none">
+              <Sparkles className="text-white" size={18} />
+            </div>
+            <div>
+              <h4 className="text-sm font-black text-gray-900 dark:text-white leading-tight">Install CurrencyEx</h4>
+              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Add to Home Screen</p>
+            </div>
+          </div>
+          <button 
+            onClick={handleInstallClick}
+            className="px-4 py-2 bg-gray-900 dark:bg-white hover:bg-black dark:hover:bg-gray-100 text-white dark:text-gray-900 text-[10px] font-black uppercase tracking-[0.1em] rounded-xl transition-all shadow-md active:scale-95"
+          >
+            Get App
+          </button>
+        </div>
+      )}
+
       {/* Dynamic Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-24 -left-20 w-96 h-96 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl"></div>
