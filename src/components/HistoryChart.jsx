@@ -62,7 +62,7 @@ const HistoryChart = ({ data, loading, fromCurrency, toCurrency, timeframe, setT
             <span className="text-gray-400 font-medium">Market data temporarily unavailable</span>
           </div>
         ) : (
-          <div className="w-full h-[400px] relative">
+          <div className="w-full h-[250px] sm:h-[400px] relative">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>

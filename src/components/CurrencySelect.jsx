@@ -13,7 +13,8 @@ const CurrencySelect = ({ value, label, onChange }) => {
 
   const filteredCurrencies = CURRENCIES.filter(c => 
     c.code.toLowerCase().includes(debouncedSearch.toLowerCase()) || 
-    c.name.toLowerCase().includes(debouncedSearch.toLowerCase())
+    c.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+    (c.countryName && c.countryName.toLowerCase().includes(debouncedSearch.toLowerCase()))
   );
 
   useEffect(() => {

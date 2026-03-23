@@ -4,7 +4,7 @@ import CurrencySelect from './CurrencySelect';
 import { useCurrencyRates } from '../hooks/useCurrencyRates';
 
 const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCurrency }) => {
-  const [amount, setAmount] = useState(1);
+  const [amount, setAmount] = useState('1');
   const [convertedAmount, setConvertedAmount] = useState(0);
 
   const { data, loading, error } = useCurrencyRates(fromCurrency);
@@ -12,7 +12,8 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
   useEffect(() => {
     if (data && data.rates[toCurrency]) {
       const rate = data.rates[toCurrency];
-      setConvertedAmount((amount * rate).toFixed(2));
+      const numericAmount = parseFloat(amount) || 0;
+      setConvertedAmount((numericAmount * rate).toFixed(2));
     }
   }, [data, toCurrency, amount]);
 
@@ -41,9 +42,15 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
           </label>
           <div className="relative group">
             <input
-              type="number"
+              type="text"
+              inputMode="decimal"
               value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '' || /^\d*\.?\d*$/.test(val)) {
+                  setAmount(val);
+                }
+              }}
               className="w-full p-5 bg-gray-50 dark:bg-gray-900/50 border border-transparent focus:border-blue-400 dark:focus:border-blue-600 rounded-2xl text-3xl font-black text-gray-900 dark:text-gray-100 outline-none transition-all duration-300"
               placeholder="0.00"
             />
@@ -54,7 +61,7 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
         </div>
 
         {/* Currency Selectors */}
-        <div className="flex flex-col md:flex-row items-center gap-4 relative">
+        <div className="flex flex-col md:flex-row items-center md:items-end gap-2 md:gap-6 relative">
           <CurrencySelect
             label="From"
             value={fromCurrency}
@@ -63,7 +70,7 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
 
           <button
             onClick={handleSwap}
-            className="md:mt-6 p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-lg shadow-blue-200 dark:shadow-none transition-all duration-300 transform active:scale-95 group z-10"
+            className="translate-y-3 md:translate-y-0 p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-lg shadow-blue-200 dark:shadow-none transition-all duration-300 transform active:scale-95 group z-10"
           >
             <ArrowLeftRight size={24} className="group-hover:rotate-180 transition-transform duration-500" />
           </button>
@@ -82,7 +89,7 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
               <TrendingUp size={18} />
               <span className="text-xs uppercase tracking-[0.1em]">Live Converted Flow</span>
             </div>
-            
+
             {loading ? (
               <div className="flex items-center gap-3 animate-pulse">
                 <div className="h-10 w-48 bg-blue-200/50 dark:bg-blue-800/50 rounded-lg"></div>
@@ -107,7 +114,7 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
               </div>
             </div>
           </div>
-          
+
           <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-400/5 dark:bg-blue-400/10 rounded-full blur-3xl group-hover:bg-blue-400/10 transition-colors duration-500"></div>
         </div>
 
