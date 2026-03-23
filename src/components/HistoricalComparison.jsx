@@ -72,7 +72,7 @@ const HistoricalComparison = ({ fromCurrency, toCurrency }) => {
               value={selectedDate}
               max={maxDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full p-4 bg-gray-50 dark:bg-gray-900/50 border border-transparent focus:border-indigo-400 rounded-2xl text-sm font-bold text-gray-900 dark:text-white outline-none transition-all"
+              className="w-full max-w-full p-3 sm:p-4 bg-gray-50 dark:bg-gray-900/50 border border-transparent focus:border-indigo-400 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold text-gray-900 dark:text-white outline-none transition-all box-border m-0"
             />
           </div>
 
