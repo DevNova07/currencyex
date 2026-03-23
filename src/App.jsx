@@ -10,6 +10,32 @@ function App() {
   const [toCurrency, setToCurrency] = useState('INR');
   const [timeframe, setTimeframe] = useState(7);
 
+  // Auto-Detect User Location & Currency
+  useEffect(() => {
+    const detectUserCurrency = async () => {
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        
+        if (data && data.currency) {
+          // If user is in India, keep USD as base to check against INR.
+          // For everywhere else (Dubai, UK etc), set their local currency as base.
+          if (data.currency === 'INR') {
+            setFromCurrency('USD');
+            setToCurrency('INR');
+          } else {
+            setFromCurrency(data.currency);
+            setToCurrency('INR');
+          }
+        }
+      } catch (error) {
+        console.log('Location auto-detect skipped (using defaults).');
+      }
+    };
+
+    detectUserCurrency();
+  }, []);
+
   const { data: historyData, loading: historyLoading } = useRateHistory(fromCurrency, toCurrency, timeframe);
 
   const [currentDate, setCurrentDate] = useState(new Date());
