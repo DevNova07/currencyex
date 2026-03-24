@@ -89,36 +89,28 @@ const AIChatbot = () => {
     setIsTyping(true);
 
     try {
-      const systemPrompt = "You are the CurrencyEx AI Assistant, a helpful financial expert built into the CurrencyEx web application. Your job is to help users with currency conversion advice, global market trends, and financial questions. Be very concise, extremely friendly, and use emojis. Respond completely in Hinglish (Hindi written in English alphabet) or conversational Hindi to match exactly what the user speaks. Do not give generic warnings unless absolute necessary.";
+      // Fake network delay for a realistic feel
+      await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 800));
       
-      const payload = {
-        contents: [
-          { role: "user", parts: [{ text: systemPrompt + "\n\nUser Question: " + userText }] }
-        ]
-      };
-
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await response.json();
+      const text = userText.toLowerCase();
+      let botResponse = "Main ek AI Assistant hoon! Abhi meri live API limit cross ho gayi hai 😅, par aap live rates ke liye website ke tools ka use jarur kar sakte hain 💸!";
       
-      if (data.error) {
-         console.error("Gemini API Error:", data.error);
-         throw new Error(data.error.message || "API Error");
+      if (text.includes("rate") || text.includes("price") || text.includes("kitna") || text.includes("bhav") || text.includes("rupee") || text.includes("dollar")) {
+        botResponse = "Currency ke live rates aap site ke 'Live Currency Ticker' aur main converter tool mein dekh sakte hain! Ye rates ekdum real-time hain. 📈";
+      } else if (text.includes("hello") || text.includes("hi") || text.includes("namaste") || text.includes("hey")) {
+        botResponse = "Namaste! 🙏 Main aapki kya madad kar sakta hoon? Aap mujhse website features ke bare me puch sakte hain.";
+      } else if (text.includes("best time") || text.includes("kab") || text.includes("trend") || text.includes("bheju")) {
+        botResponse = "Paise bhejne ka sabse sahi time tab hota hai jab graph aapke favour mein ho. Aap 'Performance Metrics' chart mein pichle 7 din ka trend check kar sakte hain, wo aapko sahi samay decide karne me madad karega! 📊";
+      } else if (text.includes("kaise ho") || text.includes("how are you")) {
+        botResponse = "Main bilkul mast hoon! 🚀 Aap batayiye, aaj market kaisa lag raha hai?";
+      } else if (text.includes("thanks") || text.includes("thank you") || text.includes("shukriya") || text.includes("dhanyawad")) {
+        botResponse = "Aapka humesha swagat hai! Koi aur sawal ho to zaroor puchhiyega. 😊";
       }
-
-      if (data.candidates && data.candidates.length > 0) {
-        const botResponse = data.candidates[0].content.parts[0].text;
-        setMessages(prev => [...prev, { role: 'bot', text: botResponse }]);
-      } else {
-        throw new Error('No response');
-      }
+      
+      setMessages(prev => [...prev, { role: 'bot', text: botResponse }]);
     } catch (error) {
       console.error("AI Error:", error);
-      setMessages(prev => [...prev, { role: 'bot', text: `Sorry bhai, error aaya hai:\n${error.message}\n\nSayad API key galat hai ya limit cross ho gayi hai.` }]);
+      setMessages(prev => [...prev, { role: 'bot', text: `Sorry bhai, kuch issue aa gaya, thodi der baad puchiye!` }]);
     } finally {
       setIsTyping(false);
     }
