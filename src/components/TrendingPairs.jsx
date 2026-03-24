@@ -66,11 +66,10 @@ const TrendingPairs = ({ onSelect }) => {
   const CurrencyCard = ({ cur, positive }) => (
     <button
       onClick={() => onSelect && onSelect(cur.code, 'INR')}
-      className={`group flex items-center justify-between p-3 sm:p-4 rounded-2xl border transition-all duration-300 active:scale-95 w-full text-left ${
-        positive
+      className={`group flex items-center justify-between p-3 sm:p-4 rounded-2xl border transition-all duration-300 active:scale-95 w-full text-left ${positive
           ? 'bg-green-50/50 dark:bg-green-900/10 border-green-100 dark:border-green-900/30 hover:border-green-300 dark:hover:border-green-700'
           : 'bg-red-50/50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30 hover:border-red-300 dark:hover:border-red-700'
-      }`}
+        }`}
     >
       <div className="flex items-center gap-2.5">
         <img
@@ -127,7 +126,7 @@ const TrendingPairs = ({ onSelect }) => {
             <TrendingUp size={13} className="text-green-500" />
             <span className="text-[10px] font-black text-green-600 uppercase tracking-widest">Top Gainers</span>
           </div>
-          {gainers.map(cur => <CurrencyCard key={cur.code} cur={cur} positive={true} />)}
+          {gainers.map(cur => <CurrencyCard key={cur.code} cur={cur} positive={cur.change >= 0} />)}
         </div>
 
         {/* Losers */}
@@ -136,7 +135,7 @@ const TrendingPairs = ({ onSelect }) => {
             <TrendingDown size={13} className="text-red-500" />
             <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Top Losers</span>
           </div>
-          {losers.map(cur => <CurrencyCard key={cur.code} cur={cur} positive={false} />)}
+          {losers.map(cur => <CurrencyCard key={cur.code} cur={cur} positive={cur.change >= 0} />)}
         </div>
       </div>
 

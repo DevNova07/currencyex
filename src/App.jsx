@@ -1,15 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, ExternalLink, TrendingUp, Globe, Newspaper, Info, History } from 'lucide-react';
+import { Sparkles, ExternalLink, TrendingUp, Globe, Newspaper, Info, History, User as UserIcon } from 'lucide-react';
 import CurrencyConverter from './components/CurrencyConverter';
 import HistoryChart from './components/HistoryChart';
 import HistoricalComparison from './components/HistoricalComparison';
 import TrendingPairs from './components/TrendingPairs';
 import LiveTicker from './components/LiveTicker';
+import RemittanceComparison from './components/RemittanceComparison';
+import MarketNews from './components/MarketNews';
+import AIChatbot from './components/AIChatbot';
+import AuthModal from './components/AuthModal';
+import SavedFavorites from './components/SavedFavorites';
 import { useRateHistory } from './hooks/useRateHistory';
 
 function App() {
   const [fromCurrency, setFromCurrency] = useState('USD');
   const [toCurrency, setToCurrency] = useState('INR');
+  const [user, setUser] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [favorites, setFavorites] = useState(() => {
+    try {
+      const saved = localStorage.getItem('currency-favorites');
+      return saved && saved !== "undefined" ? JSON.parse(saved) : [];
+    } catch(e) {
+      return [];
+    }
+  });
   const [timeframe, setTimeframe] = useState(7);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
@@ -75,12 +90,25 @@ function App() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
+    localStorage.setItem('currency-favorites', JSON.stringify(favorites));
+  }, [favorites]);
+
+  const toggleFavorite = (from, to) => {
+    const exists = favorites.find(f => f.from === from && f.to === to);
+    if (exists) {
+      setFavorites(favorites.filter(f => !(f.from === from && f.to === to)));
+    } else {
+      setFavorites([...favorites, { from, to }]);
+    }
+  };
+
+  useEffect(() => {
     const timer = setInterval(() => setCurrentDate(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#fcfcfd] dark:bg-gray-950 transition-colors duration-500 selection:bg-blue-100 selection:text-blue-700 font-sans relative">
+    <div className="min-h-screen bg-slate-100 dark:bg-gray-950 transition-colors duration-500 selection:bg-blue-100 selection:text-blue-700 font-sans relative">
 
       {/* PWA Install Prompt (Floating popup) */}
       {showInstallBtn && (
@@ -112,8 +140,8 @@ function App() {
 
       {/* Dynamic Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-24 -left-20 w-96 h-96 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 -right-20 w-80 h-80 bg-indigo-50 dark:indigo-900/10 rounded-full blur-3xl"></div>
+        <div className="absolute -top-24 -left-20 w-[500px] h-[500px] bg-blue-200/40 dark:bg-blue-900/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 -right-20 w-[400px] h-[400px] bg-indigo-200/40 dark:bg-indigo-900/10 rounded-full blur-3xl"></div>
       </div>
 
       {/* Professional Navbar */}
@@ -125,7 +153,7 @@ function App() {
             </div>
             <div>
               <h1 className="text-xl font-black text-gray-900 dark:text-white tracking-tighter leading-none">
-                Curency<span className="text-blue-600">Ex</span>
+                Currency<span className="text-blue-600">Ex</span>
               </h1>
               <span className="text-[9px] font-extrabold text-gray-400 uppercase tracking-[0.3em] leading-none mt-1 block">
                 Institutional Node
@@ -133,12 +161,30 @@ function App() {
             </div>
           </div>
 
-          {/* Mobile: only clock */}
-          <div className="flex md:hidden flex-col items-end">
-            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Market Time</span>
-            <span className="text-sm font-black text-gray-900 dark:text-white tabular-nums">
-              {currentDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-            </span>
+          {/* Mobile: clock and auth */}
+          <div className="flex md:hidden items-center gap-4">
+            <div className="flex flex-col items-end">
+              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Time</span>
+              <span className="text-xs font-black text-gray-900 dark:text-white tabular-nums">
+                {currentDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
+            
+            {user ? (
+              <button 
+                onClick={() => setUser(null)}
+                className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-white dark:border-gray-800 shadow-md flex items-center justify-center text-white font-black text-[12px] transform transition-transform active:scale-95"
+              >
+                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+              </button>
+            ) : (
+              <button 
+                onClick={() => setShowAuthModal(true)}
+                className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white shadow-[0_10px_20px_rgba(37,99,235,0.3)] hover:scale-105 active:scale-95 transition-all"
+              >
+                <UserIcon size={18} />
+              </button>
+            )}
           </div>
 
           {/* Desktop: full bar */}
@@ -158,6 +204,31 @@ function App() {
                 {currentDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </span>
             </div>
+
+            <div className="h-8 w-[1px] bg-gray-100 dark:bg-gray-900 mx-2"></div>
+
+            {user ? (
+              <div className="flex items-center gap-3">
+                <div className="text-right hidden lg:block">
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] leading-none mb-1">Authenticated</p>
+                  <p className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-tight">{user?.name || 'User'}</p>
+                </div>
+                <button 
+                  onClick={() => setUser(null)}
+                  className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-white dark:border-gray-800 shadow-lg flex items-center justify-center text-white font-black text-xs transform hover:scale-110 transition-all active:scale-95"
+                >
+                  {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setShowAuthModal(true)}
+                className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full text-[11px] font-black uppercase tracking-[0.2em] shadow-[0_10px_20px_rgba(37,99,235,0.3)] hover:shadow-[0_10px_30px_rgba(37,99,235,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+              >
+                <UserIcon size={14} />
+                Sign In
+              </button>
+            )}
           </div>
         </div>
       </nav>
@@ -185,6 +256,8 @@ function App() {
                 toCurrency={toCurrency}
                 setFromCurrency={setFromCurrency}
                 setToCurrency={setToCurrency}
+                toggleFavorite={user ? toggleFavorite : null}
+                isFavorite={favorites.some(f => f.from === fromCurrency && f.to === toCurrency)}
               />
             </div>
           </div>
@@ -198,6 +271,36 @@ function App() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
             />
+          </div>
+
+          {/* Section 1.7: Saved Favorites (Only for Logged In) */}
+          {user && (
+            <div className="flex flex-col pt-6 sm:pt-12 border-t border-gray-100 dark:border-gray-900 w-full max-w-4xl mx-auto">
+              <SavedFavorites 
+                user={user}
+                favorites={favorites}
+                onRemove={(pair) => toggleFavorite(pair.from, pair.to)}
+                onSelect={(from, to) => {
+                  setFromCurrency(from);
+                  setToCurrency(to);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
+            </div>
+          )}
+
+          {/* Section 4: Remittance Comparison */}
+          <div className="flex flex-col pt-6 sm:pt-12 border-t border-gray-100 dark:border-gray-900 w-full max-w-4xl mx-auto">
+            <div className="px-1 mb-6 flex items-center justify-center gap-2">
+              <Globe size={18} className="text-emerald-500" />
+              <h3 className="text-sm font-black text-gray-900 dark:text-gray-100 uppercase tracking-widest">Remittance Providers</h3>
+            </div>
+            <div className="w-full">
+              <RemittanceComparison
+                fromCurrency={fromCurrency}
+                toCurrency={toCurrency}
+              />
+            </div>
           </div>
 
           {/* Section 2: Chart (Matched Width) */}
@@ -234,8 +337,12 @@ function App() {
         </div>
       </main>
 
+      <MarketNews />
+
+      <AIChatbot />
+
       {/* Enhanced Footer with Finance Links */}
-      <footer className="relative z-10 mt-24 pb-12 pt-16 border-t border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950">
+      <footer className="relative z-10 mt-0 pb-12 pt-16 border-t border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
             <div className="space-y-4">
@@ -296,6 +403,12 @@ function App() {
           </div>
         </div>
       </footer>
+
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        onLogin={(userData) => setUser(userData)}
+      />
     </div>
   );
 }

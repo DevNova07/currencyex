@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeftRight, RefreshCcw, TrendingUp, Clock } from 'lucide-react';
+import { ArrowLeftRight, RefreshCcw, TrendingUp, Clock, Star } from 'lucide-react';
 import CurrencySelect from './CurrencySelect';
 import { useCurrencyRates } from '../hooks/useCurrencyRates';
 
-const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCurrency }) => {
+const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCurrency, toggleFavorite, isFavorite }) => {
   const [amount, setAmount] = useState('1');
   const [convertedAmount, setConvertedAmount] = useState(0);
+  const [includeMarkup, setIncludeMarkup] = useState(false);
 
   const { data, loading, error } = useCurrencyRates(fromCurrency);
 
   useEffect(() => {
     if (data && data.rates[toCurrency]) {
-      const rate = data.rates[toCurrency];
+      let rate = data.rates[toCurrency];
+      if (includeMarkup) {
+        rate = rate * 1.02; // Add 2% bank markup
+      }
       const numericAmount = parseFloat(amount) || 0;
       setConvertedAmount((numericAmount * rate).toFixed(2));
     }
-  }, [data, toCurrency, amount]);
+  }, [data, toCurrency, amount, includeMarkup]);
 
   const handleSwap = () => {
     setFromCurrency(toCurrency);
@@ -23,6 +27,7 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
   };
 
   const exchangeRate = data ? data.rates[toCurrency] : 1;
+  const effectiveRate = includeMarkup ? exchangeRate * 1.02 : exchangeRate;
   const lastUpdated = data ? new Date(data.date).toLocaleDateString() : '';
 
   return (
@@ -85,10 +90,41 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
         {/* Result Area */}
         <div className="p-4 sm:p-8 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-gray-900 dark:to-blue-900/20 rounded-[1.5rem] sm:rounded-[2rem] border border-blue-100/50 dark:border-blue-900/30 relative overflow-hidden group">
           <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-2 text-blue-600 dark:text-blue-400 font-bold">
-              <TrendingUp size={18} />
-              <span className="text-xs uppercase tracking-[0.1em]">Live Converted Flow</span>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold">
+                <TrendingUp size={18} />
+                <span className="text-xs uppercase tracking-[0.1em]">Live Converted Flow</span>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                {/* Save to Favorites (Only for Logged In) */}
+                {toggleFavorite && (
+                  <button 
+                    onClick={() => toggleFavorite(fromCurrency, toCurrency)}
+                    className={`p-2 rounded-xl transition-all duration-300 ${isFavorite ? 'bg-yellow-500 text-white shadow-lg shadow-yellow-200 dark:shadow-none' : 'bg-gray-100 dark:bg-gray-800 text-gray-400 hover:text-yellow-500'}`}
+                    title={isFavorite ? "Remove from Favorites" : "Save to Favorites"}
+                  >
+                    <Star size={18} fill={isFavorite ? "currentColor" : "none"} />
+                  </button>
+                )}
+
+                {/* Markup Toggle */}
+              <label className="flex items-center gap-2 cursor-pointer group/toggle">
+                <div className="relative flex items-center">
+                  <input
+                    type="checkbox"
+                    className="appearance-none w-8 h-4 bg-gray-200 dark:bg-gray-700 rounded-full checked:bg-blue-500 transition-colors duration-300 cursor-pointer"
+                    checked={includeMarkup}
+                    onChange={(e) => setIncludeMarkup(e.target.checked)}
+                  />
+                  <div className={`absolute w-3 h-3 bg-white rounded-full transition-transform duration-300 left-0.5 pointer-events-none ${includeMarkup ? 'translate-x-4' : 'translate-x-0'}`}></div>
+                </div>
+                <span className="text-[10px] sm:text-xs font-black tracking-widest uppercase text-gray-500 dark:text-gray-400 group-hover/toggle:text-gray-900 dark:group-hover/toggle:text-gray-200 transition-colors">
+                  +2% Bank Fee
+                </span>
+              </label>
             </div>
+          </div>
 
             {loading ? (
               <div className="flex items-center gap-3 animate-pulse">
@@ -106,7 +142,7 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
             <div className="mt-8 flex flex-wrap items-center gap-5 text-[11px] text-gray-400 dark:text-gray-500 font-extrabold uppercase tracking-widest">
               <div className="flex items-center gap-2">
                 <RefreshCcw size={14} className={loading ? 'animate-spin' : ''} />
-                <span>Rate: 1.00 {fromCurrency} = {exchangeRate} {toCurrency}</span>
+                <span>Rate: 1.00 {fromCurrency} = {effectiveRate.toFixed(4)} {toCurrency}</span>
               </div>
               <div className="flex items-center gap-2 border-l border-gray-200 dark:border-gray-800 pl-5">
                 <Clock size={14} />

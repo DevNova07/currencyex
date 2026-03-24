@@ -17,6 +17,45 @@ const HistoryChart = ({ data, loading, fromCurrency, toCurrency, timeframe, setT
     { id: 30, label: '1M' },
   ];
 
+  const getAiSuggestion = () => {
+    if (!data || data.length < 2) return null;
+    
+    const rates = data.map(d => d.rate);
+    const currentRate = rates[rates.length - 1];
+    const maxRate = Math.max(...rates);
+    const minRate = Math.min(...rates);
+    
+    const range = maxRate - minRate;
+    if (range === 0) return { text: "Market is stable. Safe to send.", badge: "bg-gray-500/10 text-gray-500 border-gray-200 dark:border-gray-800" };
+    
+    const position = (currentRate - minRate) / range;
+    const tfText = timeframe === 1 ? '24-hour' : timeframe === 7 ? '7-day' : '30-day';
+
+    if (position > 0.8) {
+      return { 
+        text: `✅ Great time to send! Rate is near ${tfText} highs.`, 
+        badge: "bg-green-500/10 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900/30" 
+      };
+    } else if (position < 0.2) {
+      return { 
+        text: `⏳ Wait if possible. Rates are near ${tfText} lows.`, 
+        badge: "bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900/30" 
+      };
+    } else if (position > 0.5) {
+      return { 
+        text: `📈 Good time to send. Rate is above ${tfText} average.`, 
+        badge: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-900/30" 
+      };
+    } else {
+      return { 
+        text: `📉 Fair time to send. Rate is below ${tfText} average.`, 
+        badge: "bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-900/30" 
+      };
+    }
+  };
+
+  const aiSuggestion = getAiSuggestion();
+
   return (
     <div className="w-full h-full p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-500 border border-gray-50 dark:border-gray-700 flex flex-col overflow-hidden">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 flex-shrink-0">
@@ -51,6 +90,12 @@ const HistoryChart = ({ data, loading, fromCurrency, toCurrency, timeframe, setT
         </div>
       </div>
 
+      {aiSuggestion && !loading && (
+        <div className={`mb-6 p-3 sm:px-5 rounded-2xl border shadow-sm transition-all duration-500 flex items-center justify-center text-center sm:text-left sm:justify-start gap-2 ${aiSuggestion.badge}`}>
+          <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest leading-none">{aiSuggestion.text}</span>
+        </div>
+      )}
+
       <div className="flex-grow flex flex-col justify-center min-h-0">
         {loading ? (
           <div className="w-full h-full min-h-[250px] bg-gray-50/50 dark:bg-gray-900/20 rounded-2xl animate-pulse flex flex-col items-center justify-center gap-3">
@@ -63,7 +108,7 @@ const HistoryChart = ({ data, loading, fromCurrency, toCurrency, timeframe, setT
           </div>
         ) : (
           <div className="w-full h-[250px] sm:h-[400px] relative">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="99%" height="100%" minWidth={1} minHeight={1}>
               <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorRate" x1="0" y1="0" x2="0" y2="1">
@@ -79,7 +124,14 @@ const HistoryChart = ({ data, loading, fromCurrency, toCurrency, timeframe, setT
                   tick={{ fill: '#9ca3af', fontSize: 10, fontWeight: 600 }}
                   dy={10}
                 />
-                <YAxis hide domain={['auto', 'auto']} />
+                <YAxis 
+                  domain={['auto', 'auto']} 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: '#9ca3af', fontSize: 10, fontWeight: 600 }}
+                  width={40}
+                  tickFormatter={(val) => val.toFixed(2)}
+                />
                 <Tooltip 
                   cursor={{ stroke: '#3b82f6', strokeWidth: 1 }}
                   contentStyle={{ 

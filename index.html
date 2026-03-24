@@ -17,6 +17,15 @@
     <meta property="og:site_name" content="CurrencyEx" />
   </head>
   <body>
+    <!-- TEMPORARY ERROR CATCHER FOR DEBUGGING -->
+    <script>
+      window.addEventListener('error', function(event) {
+        document.body.innerHTML += '<div style="position:fixed;top:0;left:0;width:100%;background:red;color:white;z-index:999999;padding:20px;font-family:monospace;font-size:16px;"><b>APP CRASH DECTECTED:</b><br/>' + event.error.message + '<br/><pre>' + event.error.stack + '</pre></div>';
+      });
+      window.addEventListener('unhandledrejection', function(event) {
+         document.body.innerHTML += '<div style="position:fixed;top:0;left:0;width:100%;background:red;color:white;z-index:999999;padding:20px;font-family:monospace;font-size:16px;"><b>PROMISE CRASH DECTECTED:</b><br/>' + event.reason + '</div>';
+      });
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
