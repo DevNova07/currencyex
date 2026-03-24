@@ -9,7 +9,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'pwa-icon.svg', 'logo.png'],
+      includeAssets: ['logo.svg', 'favicon.svg', 'pwa-icon.svg'],
       manifest: {
         name: 'CurrencyEx Institutional Converter',
         short_name: 'CurrencyEx',
@@ -19,19 +19,9 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: 'logo.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'logo.png',
-            sizes: '512x512',
-            type: 'image/png'
-          },
-          {
-            src: 'logo.png',
-            sizes: '512x512',
-            type: 'image/png',
+            src: 'logo.svg',
+            sizes: '192x192 512x512',
+            type: 'image/svg+xml',
             purpose: 'any maskable'
           }
         ]
