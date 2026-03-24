@@ -24,7 +24,7 @@ const AIChatbot = () => {
   const dragRef = useRef({ startX: 0, startY: 0, initialX: 0, initialY: 0 });
 
   const handleStart = (e) => {
-    if (e.target.closest('.no-drag')) return;
+    e.stopPropagation();
     setIsDragging(true);
     const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
     const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
@@ -128,8 +128,14 @@ const AIChatbot = () => {
     <>
       {/* Floating Button */}
       <button 
-        onClick={() => setIsOpen(true)}
-        className={`fixed bottom-24 right-4 sm:bottom-10 sm:right-10 px-5 py-3.5 sm:px-6 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full shadow-[0_10px_40px_rgba(37,99,235,0.5)] transition-all duration-500 transform hover:scale-105 z-[100] flex items-center gap-3 border border-white/10 ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
+        onMouseDown={handleStart}
+        onTouchStart={handleStart}
+        onClick={() => !isDragging && setIsOpen(true)}
+        style={{
+          transform: `translate(${position.x}px, ${position.y}px)`,
+          transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s, scale 0.5s'
+        }}
+        className={`fixed bottom-24 right-4 sm:bottom-10 sm:right-10 px-5 py-3.5 sm:px-6 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full shadow-[0_10px_40px_rgba(37,99,235,0.5)] z-[100] flex items-center gap-3 border border-white/10 cursor-move ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
       >
         <MessageSquare size={22} className="sm:w-6 sm:h-6" />
         <span className="font-black text-sm sm:text-base tracking-widest uppercase">Ask AI</span>
@@ -139,18 +145,14 @@ const AIChatbot = () => {
       {/* Chat Window */}
       <div 
         style={{
-          transform: isOpen 
-            ? `translate(calc(${position.x}px), calc(${position.y}px)) scale(1)` 
-            : `translate(calc(${position.x}px), calc(${position.y + 100}px)) scale(0.5)`,
-          transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s'
+          transform: `translate(${position.x}px, ${position.y}px) ${isOpen ? 'scale(1)' : 'translateY(100px) scale(0.5)'}`,
+          transition: isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s'
         }}
         className={`fixed bottom-0 right-0 sm:bottom-10 sm:right-10 w-full sm:w-[400px] h-[85vh] sm:h-[550px] max-h-[85vh] bg-white dark:bg-gray-950 rounded-t-3xl sm:rounded-[2rem] shadow-[0_-20px_80px_rgba(0,0,0,0.3)] sm:shadow-[0_20px_80px_rgba(0,0,0,0.6)] border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden sm:origin-bottom-right z-[101] ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
         {/* Header */}
         <div 
-          onMouseDown={handleStart}
-          onTouchStart={handleStart}
-          className="p-4 sm:p-5 bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-between shadow-md relative overflow-hidden flex-shrink-0 cursor-move"
+          className="p-4 sm:p-5 bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-between shadow-md relative overflow-hidden flex-shrink-0"
         >
           <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -translate-y-16 translate-x-12"></div>
           <div className="flex items-center gap-3 relative z-10">
@@ -165,8 +167,8 @@ const AIChatbot = () => {
             </div>
           </div>
           <button 
-            onClick={() => setIsOpen(false)}
-            className="no-drag p-2 text-blue-100 hover:text-white hover:bg-white/10 rounded-full transition-colors relative z-10"
+            onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
+            className="p-2 text-blue-100 hover:text-white hover:bg-white/10 rounded-full transition-colors relative z-10"
           >
             <X size={20} />
           </button>
