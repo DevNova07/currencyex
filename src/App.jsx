@@ -28,6 +28,23 @@ function App() {
   const [timeframe, setTimeframe] = useState(7);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') === 'dark' || 
+        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [darkMode]);
 
   // Auto-Detect User Location & Currency
   useEffect(() => {
@@ -205,7 +222,15 @@ function App() {
               </span>
             </div>
 
-            <div className="h-8 w-[1px] bg-gray-100 dark:bg-gray-900 mx-2"></div>
+            <button 
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2.5 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 rounded-xl hover:text-blue-600 dark:hover:text-blue-400 transition-all active:scale-95 border border-gray-200 dark:border-gray-800"
+              aria-label="Toggle Dark Mode"
+            >
+              {darkMode ? <Sparkles size={18} /> : <Globe size={18} />}
+            </button>
+
+            <div className="h-8 w-[1px] bg-gray-100 dark:bg-gray-900 mx-1"></div>
 
             {user ? (
               <div className="flex items-center gap-3">
@@ -259,6 +284,22 @@ function App() {
                 toggleFavorite={user ? toggleFavorite : null}
                 isFavorite={favorites.some(f => f.from === fromCurrency && f.to === toCurrency)}
               />
+            </div>
+
+            {/* Trust Statistics Bar */}
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              {[
+                { label: 'Live Rates', value: '160+', sub: 'Global Currencies' },
+                { label: 'Data Speed', value: '< 1s', sub: 'Real-time Updates' },
+                { label: 'Security', value: '256-bit', sub: 'SSL Encrypted' },
+                { label: 'Uptime', value: '99.9%', sub: 'Institutional Node' }
+              ].map((stat, i) => (
+                <div key={i} className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-white dark:border-gray-800 p-4 rounded-2xl text-center group hover:bg-white dark:hover:bg-gray-900 transition-all hover:shadow-xl hover:shadow-blue-500/5">
+                  <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">{stat.label}</p>
+                  <p className="text-xl font-black text-gray-900 dark:text-white tracking-tight group-hover:scale-110 transition-transform">{stat.value}</p>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter mt-1">{stat.sub}</p>
+                </div>
+              ))}
             </div>
           </div>
 
