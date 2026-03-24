@@ -4,6 +4,7 @@ import { MessageSquare, X, Send, Bot, User, Loader2, Sparkles } from 'lucide-rea
 const GEMINI_API_KEY = 'AIzaSyDqT51Zb_uKJZPVUsMzkiDp_gJejSQDbqY';
 
 const formatText = (text) => {
+  if (!text) return '';
   let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
   return formatted.replace(/\n/g, '<br/>');
@@ -17,6 +18,47 @@ const AIChatbot = () => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef({ startX: 0, startY: 0, initialX: 0, initialY: 0 });
+
+  const handleMouseDown = (e) => {
+    if (e.target.closest('.no-drag')) return;
+    setIsDragging(true);
+    dragRef.current.startX = e.clientX;
+    dragRef.current.startY = e.clientY;
+    dragRef.current.initialX = position.x;
+    dragRef.current.initialY = position.y;
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragRef.current.startX;
+    const dy = e.clientY - dragRef.current.startY;
+    setPosition({
+      x: dragRef.current.initialX + dx,
+      y: dragRef.current.initialY + dy
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    } else {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,6 +94,11 @@ const AIChatbot = () => {
 
       const data = await response.json();
       
+      if (data.error) {
+         console.error("Gemini API Error:", data.error);
+         throw new Error(data.error.message || "API Error");
+      }
+
       if (data.candidates && data.candidates.length > 0) {
         const botResponse = data.candidates[0].content.parts[0].text;
         setMessages(prev => [...prev, { role: 'bot', text: botResponse }]);
@@ -60,7 +107,7 @@ const AIChatbot = () => {
       }
     } catch (error) {
       console.error("AI Error:", error);
-      setMessages(prev => [...prev, { role: 'bot', text: "Sorry bhai, network theek nahi hai ya server busy hai. Thodi der me wapas try kijiye." }]);
+      setMessages(prev => [...prev, { role: 'bot', text: `Sorry bhai, error aaya hai:\n${error.message}\n\nSayad API key galat hai ya limit cross ho gayi hai.` }]);
     } finally {
       setIsTyping(false);
     }
@@ -80,10 +127,19 @@ const AIChatbot = () => {
 
       {/* Chat Window */}
       <div 
-        className={`fixed bottom-0 right-0 sm:bottom-10 sm:right-10 w-full sm:w-[400px] h-[85vh] sm:h-[550px] max-h-[85vh] bg-white dark:bg-gray-950 rounded-t-3xl sm:rounded-[2rem] shadow-[0_-20px_80px_rgba(0,0,0,0.3)] sm:shadow-[0_20px_80px_rgba(0,0,0,0.6)] border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden transition-all duration-500 sm:origin-bottom-right z-[101] ${isOpen ? 'translate-y-0 sm:scale-100 opacity-100' : 'translate-y-full sm:translate-y-0 sm:scale-50 opacity-0 pointer-events-none'}`}
+        style={{
+          transform: isOpen 
+            ? `translate(calc(${position.x}px), calc(${position.y}px)) scale(1)` 
+            : `translate(calc(${position.x}px), calc(${position.y + 100}px)) scale(0.5)`,
+          transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s'
+        }}
+        className={`fixed bottom-0 right-0 sm:bottom-10 sm:right-10 w-full sm:w-[400px] h-[85vh] sm:h-[550px] max-h-[85vh] bg-white dark:bg-gray-950 rounded-t-3xl sm:rounded-[2rem] shadow-[0_-20px_80px_rgba(0,0,0,0.3)] sm:shadow-[0_20px_80px_rgba(0,0,0,0.6)] border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden sm:origin-bottom-right z-[101] ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
         {/* Header */}
-        <div className="p-4 sm:p-5 bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-between shadow-md relative overflow-hidden flex-shrink-0">
+        <div 
+          onMouseDown={handleMouseDown}
+          className="p-4 sm:p-5 bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-between shadow-md relative overflow-hidden flex-shrink-0 cursor-move"
+        >
           <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -translate-y-16 translate-x-12"></div>
           <div className="flex items-center gap-3 relative z-10">
             <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-2xl text-white outline outline-1 outline-white/30 shadow-inner">
@@ -98,7 +154,7 @@ const AIChatbot = () => {
           </div>
           <button 
             onClick={() => setIsOpen(false)}
-            className="p-2 text-blue-100 hover:text-white hover:bg-white/10 rounded-full transition-colors relative z-10"
+            className="no-drag p-2 text-blue-100 hover:text-white hover:bg-white/10 rounded-full transition-colors relative z-10"
           >
             <X size={20} />
           </button>
