@@ -145,10 +145,9 @@ const AIChatbot = () => {
       {/* Chat Window */}
       <div 
         style={{
-          transform: `translate(${position.x}px, ${position.y}px) ${isOpen ? 'scale(1)' : 'translateY(100px) scale(0.5)'}`,
-          transition: isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s'
+          transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s'
         }}
-        className={`fixed bottom-0 right-0 sm:bottom-10 sm:right-10 w-full sm:w-[400px] h-[85vh] sm:h-[550px] max-h-[85vh] bg-white dark:bg-gray-950 rounded-t-3xl sm:rounded-[2rem] shadow-[0_-20px_80px_rgba(0,0,0,0.3)] sm:shadow-[0_20px_80px_rgba(0,0,0,0.6)] border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden sm:origin-bottom-right z-[101] ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed inset-0 sm:inset-auto sm:bottom-10 sm:right-10 m-auto sm:m-0 w-[95%] sm:w-[400px] h-[80vh] sm:h-[550px] bg-white dark:bg-gray-950 rounded-3xl sm:rounded-[2rem] shadow-[0_20px_80px_rgba(0,0,0,0.6)] border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden z-[101] ${isOpen ? 'scale-100 opacity-100' : 'scale-50 opacity-0 pointer-events-none'}`}
       >
         {/* Header */}
         <div 
