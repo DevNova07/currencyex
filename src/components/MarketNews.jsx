@@ -10,13 +10,13 @@ const STATIC_NEWS = [
   { id: 5, title: "RBI tightens remittance rules for outward investments", type: "alert", link: "#" },
 ];
 
-const MarketNews = () => {
+const MarketNews = ({ t }) => {
   const [currentDate, setCurrentDate] = useState('');
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    setCurrentDate(new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
+    setCurrentDate(new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }));
     
     // Fetch live financial news
     const fetchLiveNews = async () => {
@@ -68,18 +68,18 @@ const MarketNews = () => {
               <Newspaper className="text-blue-600 dark:text-blue-400" size={20} />
             </div>
             <div>
-              <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight">Market Intelligence</h3>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight">{t.ext_intel}</h3>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Live Stories • {currentDate}</p>
             </div>
           </div>
           <button className="hidden sm:flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-blue-600 dark:hover:text-white uppercase tracking-widest transition-colors cursor-pointer">
-            Source: CNBC <ExternalLink size={10} />
+            {t.news_source}: CNBC <ExternalLink size={10} />
           </button>
         </div>
 
         {loading ? (
           <div className="flex items-center justify-center min-h-[250px] bg-gray-50 dark:bg-gray-900/50 rounded-[2rem] animate-pulse">
-            <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">Fetching Live Markets...</span>
+            <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">{t.fetching}</span>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -93,7 +93,7 @@ const MarketNews = () => {
                 ></div>
                 <div className="relative z-20 p-6 sm:p-8 w-full">
                   <span className="px-2 py-1 bg-red-500 text-white text-[9px] font-black uppercase tracking-widest rounded-md mb-3 inline-flex items-center gap-1 shadow-lg shadow-red-500/30">
-                    Live Headliner <ExternalLink size={10} />
+                    {t.headliner} <ExternalLink size={10} />
                   </span>
                   <h4 className="text-xl sm:text-2xl font-black text-white leading-tight mb-2 group-hover:text-blue-300 transition-colors">
                     {mainStory.title}
@@ -111,7 +111,7 @@ const MarketNews = () => {
                 <a key={i} href={story.link} target="_blank" rel="noopener noreferrer" className="flex-1 bg-gray-50 dark:bg-gray-900 rounded-[2rem] p-6 border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition-colors group flex flex-col justify-between block">
                   <div>
                     <span className="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2 flex items-center gap-1">
-                      Financial Update <ExternalLink size={8} />
+                      {t.fin_update} <ExternalLink size={8} />
                     </span>
                     <h5 className="text-sm font-bold text-gray-900 dark:text-white leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-3">
                       {story.title}

@@ -11,7 +11,7 @@ const TICKER_PAIRS = [
   { from: 'KWD', fromFlag: 'kw', to: 'INR', label: 'Kuwaiti Dinar' },
 ];
 
-const LiveTicker = () => {
+const LiveTicker = ({ t }) => {
   const [rates, setRates] = useState({});
   const [loaded, setLoaded] = useState(false);
 
@@ -46,7 +46,7 @@ const LiveTicker = () => {
       <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center px-3 bg-gradient-to-r from-gray-950 via-gray-950 to-transparent pr-8">
         <div className="flex items-center gap-1.5">
           <Activity size={11} className="text-green-400" />
-          <span className="text-[9px] font-black text-green-400 uppercase tracking-[0.2em]">Live</span>
+          <span className="text-[9px] font-black text-green-400 uppercase tracking-[0.2em]">{t.live || 'Live'}</span>
         </div>
       </div>
 

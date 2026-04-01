@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { format, subDays } from 'date-fns';
 
 export const useRateHistory = (fromCurrency, toCurrency, days = 7) => {
@@ -16,11 +16,18 @@ export const useRateHistory = (fromCurrency, toCurrency, days = 7) => {
         const startDate = format(subDays(new Date(), days), 'yyyy-MM-dd');
         const endDate = format(new Date(), 'yyyy-MM-dd');
         
-        const response = await axios.get(`https://api.frankfurter.app/${startDate}..${endDate}?from=${fromCurrency}&to=${toCurrency}`);
+        const response = await api.get('/timeseries', {
+          params: { 
+            start_date: startDate, 
+            end_date: endDate,
+            base: fromCurrency,
+            symbols: toCurrency
+          }
+        });
         
-        if (response.data && response.data.rates) {
+        if (response.data && response.data.success && response.data.rates) {
           const chartData = Object.keys(response.data.rates).sort().map(date => ({
-            date: format(new Date(date), days <= 1 ? 'HH:mm' : 'MMM dd'),
+            date: format(new Date(date), 'MMM dd'),
             rate: response.data.rates[date][toCurrency]
           }));
           setData(chartData);

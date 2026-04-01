@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 // Simple in-memory cache corresponding to base currency
 const cache = {};
@@ -22,17 +22,24 @@ export const useCurrencyRates = (baseCurrency) => {
       }
 
       try {
-        const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`);
+        const response = await api.get('/latest', {
+          params: { base: baseCurrency }
+        });
         
-        const responseData = response.data;
-        // Save to cache
-        cache[baseCurrency] = {
-          timestamp: Date.now(),
-          data: responseData
-        };
+        if (response.data && response.data.success) {
+          const responseData = response.data;
+          // Save to cache
+          cache[baseCurrency] = {
+            timestamp: Date.now(),
+            data: responseData
+          };
 
-        setData(responseData);
+          setData(responseData);
+        } else {
+          throw new Error('RapidAPI: Failed to fetch live rates');
+        }
       } catch (err) {
+        console.error('Rates fetch error:', err);
         setError(err.message || 'Failed to fetch currency rates');
       } finally {
         setLoading(false);

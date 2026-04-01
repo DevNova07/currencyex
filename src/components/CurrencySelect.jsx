@@ -3,7 +3,7 @@ import { ChevronDown, Search, X } from 'lucide-react';
 import { CURRENCIES, getFlagUrl } from '../utils/currencies';
 import { useDebounce } from '../hooks/useDebounce';
 
-const CurrencySelect = ({ value, label, onChange }) => {
+const CurrencySelect = ({ value, label, onChange, t }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 300);
@@ -59,7 +59,7 @@ const CurrencySelect = ({ value, label, onChange }) => {
             <input
               autoFocus
               className="flex-1 bg-transparent border-none outline-none text-sm text-gray-700 dark:text-gray-200 placeholder:text-gray-400"
-              placeholder="Search currency or country..."
+              placeholder={t.search_cur || "Search currency or country..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -105,7 +105,7 @@ const CurrencySelect = ({ value, label, onChange }) => {
               ))
             ) : (
               <div className="p-8 text-center text-gray-400 text-sm">
-                No currencies found
+                {t.no_cur || "No currencies found"}
               </div>
             )}
           </div>

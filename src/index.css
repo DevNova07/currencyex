@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@layer utilities {
+  .premium-card {
+    @apply bg-white dark:bg-[#12141c] rounded-[2.5rem] shadow-[0_25px_80px_-20px_rgba(0,0,0,0.06)] dark:shadow-[0_25px_80px_-20px_rgba(0,0,0,0.45)] border border-gray-100/50 dark:border-white/5 transition-all duration-500 overflow-hidden;
+  }
+  .bg-obsidian {
+    @apply bg-[#fbfcff] dark:bg-[#0a0c10];
+  }
+}
 
 @keyframes ticker {
   0%   { transform: translateX(0); }
@@ -7,8 +15,13 @@
 }
 
 .animate-ticker {
-  animation: ticker 20s linear infinite;
+  animation: ticker 60s linear infinite;
 }
 .animate-ticker:hover {
   animation-play-state: paused;
+}
+
+body {
+  @apply antialiased text-slate-900 dark:text-slate-100;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }

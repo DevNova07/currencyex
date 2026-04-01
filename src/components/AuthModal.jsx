@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Mail, Lock, User as UserIcon, ArrowRight, Github, Chrome } from 'lucide-react';
 
-const AuthModal = ({ isOpen, onClose, onLogin }) => {
+const AuthModal = ({ isOpen, onClose, onLogin, t }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -47,10 +47,10 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
         <div className="p-8 sm:p-10 relative z-10">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-black text-gray-900 dark:text-white mt-2 tracking-tight">
-              {isLogin ? 'Welcome Back' : 'Create Account'}
+              {isLogin ? (t.welcome || 'Welcome Back') : (t.create_acc || 'Create Account')}
             </h2>
             <p className="text-sm font-bold text-gray-500 dark:text-gray-400 mt-3 max-w-[280px] mx-auto leading-relaxed">
-              {isLogin ? 'Log in securely to manage your global currency portfolios.' : 'Join CurrencyEx for real-time rates and personalized alerts.'}
+              {isLogin ? t.login_sub : t.signup_sub}
             </p>
           </div>
 
@@ -64,7 +64,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Full Name"
+                  placeholder={t.full_name || "Full Name"}
                   className="w-full bg-gray-50/80 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl py-3.5 pl-11 pr-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white dark:focus:bg-gray-900 transition-all"
                 />
               </div>
@@ -78,7 +78,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoFocus={isLogin}
-                placeholder="Email Address"
+                placeholder={t.email || "Email Address"}
                 className="w-full bg-gray-50/80 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl py-3.5 pl-11 pr-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white dark:focus:bg-gray-900 transition-all"
               />
             </div>
@@ -90,7 +90,7 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
+                placeholder={t.password || "Password"}
                 className="w-full bg-gray-50/80 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl py-3.5 pl-11 pr-4 text-sm font-bold text-gray-900 dark:text-white outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 focus:bg-white dark:focus:bg-gray-900 transition-all"
               />
             </div>
@@ -99,13 +99,13 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
               type="submit"
               className="w-full py-4 mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl text-[13px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 shadow-[0_10px_20px_rgba(37,99,235,0.2)] transition-all active:scale-[0.98]"
             >
-              {isLogin ? 'Secure Log In' : 'Create Profile'} <ArrowRight size={18} />
+              {isLogin ? (t.secure_login || 'Secure Log In') : (t.create_prof || 'Create Profile')} <ArrowRight size={18} />
             </button>
           </form>
 
           <div className="my-7 flex items-center gap-4">
             <div className="flex-1 h-px bg-gray-200 dark:bg-gray-800"></div>
-            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">OR CONTINUE WITH</span>
+            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t.or_continue || "OR CONTINUE WITH"}</span>
             <div className="flex-1 h-px bg-gray-200 dark:bg-gray-800"></div>
           </div>
 
@@ -119,12 +119,12 @@ const AuthModal = ({ isOpen, onClose, onLogin }) => {
           </div>
 
           <p className="text-center text-xs font-bold text-gray-500 mt-8">
-            {isLogin ? "New to CurrencyEx?" : "Already have an account?"}
+            {isLogin ? (t.new_here || "New to CurrencyEx?") : (t.have_acc || "Already have an account?")}
             <button 
               onClick={() => setIsLogin(!isLogin)}
               className="ml-1.5 text-blue-600 dark:text-blue-400 font-black hover:underline uppercase tracking-wider text-[11px]"
             >
-              {isLogin ? 'Create Account' : 'Log In'}
+              {isLogin ? (t.create_acc || 'Create Account') : (t.login || 'Log In')}
             </button>
           </p>
         </div>

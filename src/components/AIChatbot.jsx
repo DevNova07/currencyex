@@ -10,10 +10,10 @@ const formatText = (text) => {
   return formatted.replace(/\n/g, '<br/>');
 };
 
-const AIChatbot = () => {
+const AIChatbot = ({ t }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'bot', text: "Namaste! 🙏 Main aapka CurrencyEx AI Assistant hu. \nAap mujhse market trends, currency rates, ya paise bhejne ka sabse sahi samay (Best time to send) pooch sakte hain!" }
+    { role: 'bot', text: t.ai_greet }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -130,7 +130,7 @@ const AIChatbot = () => {
         className={`fixed bottom-24 right-4 sm:bottom-10 sm:right-10 px-5 py-3.5 sm:px-6 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full shadow-[0_10px_40px_rgba(37,99,235,0.5)] z-[100] flex items-center gap-3 border border-white/10 cursor-move ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
       >
         <MessageSquare size={22} className="sm:w-6 sm:h-6" />
-        <span className="font-black text-sm sm:text-base tracking-widest uppercase">Ask AI</span>
+        <span className="font-black text-sm sm:text-base tracking-widest uppercase">{t.ai_ask}</span>
         <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 rounded-full border-2 border-white dark:border-gray-950 animate-pulse"></span>
       </button>
 
@@ -213,7 +213,7 @@ const AIChatbot = () => {
               type="text" 
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything..."
+              placeholder={t.ai_placeholder}
               className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-[2rem] py-4 pl-6 pr-14 text-sm font-medium text-gray-900 dark:text-white outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
             />
             <button 
@@ -226,7 +226,7 @@ const AIChatbot = () => {
           </div>
           <div className="text-center mt-3 mb-1">
             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-              AI responses can make mistakes
+              {t.ai_note}
             </span>
           </div>
         </form>
