@@ -355,9 +355,9 @@ function App() {
       {/* Premium Navbar */}
       <nav className="relative z-50 px-6 py-5 bg-white/70 dark:bg-[#0a0c10]/70 backdrop-blur-2xl border-b border-gray-100 dark:border-white/5 sticky top-0">
         <div className="max-w-[1440px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4 group cursor-pointer">
+          <div className="flex items-center gap-4 group cursor-pointer" aria-label="CurrencyEx Official Branding">
             <div className="p-3 bg-indigo-600 rounded-2xl shadow-[0_0_20px_rgba(79,70,229,0.2)] transition-transform group-hover:rotate-12">
-              <Sparkles className="text-white" size={22} fill="currentColor" />
+              <Sparkles className="text-white" size={22} fill="currentColor" aria-hidden="true" />
             </div>
             <div>
               <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter leading-none">
