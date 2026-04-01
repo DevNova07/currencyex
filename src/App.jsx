@@ -3,6 +3,7 @@ import { Sparkles, ExternalLink, Globe, Languages, Info, History, User as UserIc
 import CurrencyConverter from './components/CurrencyConverter';
 import HistoryChart from './components/HistoryChart';
 import LiveTicker from './components/LiveTicker';
+import GlobalPulseTicker from './components/GlobalPulseTicker';
 import MarketNews from './components/MarketNews';
 import AIChatbot from './components/AIChatbot';
 import AuthModal from './components/AuthModal';
@@ -518,6 +519,7 @@ function App() {
       </nav>
 
       <LiveTicker t={t} />
+      <GlobalPulseTicker t={t} />
 
       {/* Top Professional Leaderboard Ad Slot */}
       <div className="max-w-4xl mx-auto px-6 pt-8">
