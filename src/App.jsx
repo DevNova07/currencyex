@@ -350,22 +350,27 @@ function App() {
         </div>
       )}
 
-      {/* Dynamic Background */}
+      {/* Vibrant Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-500/5 dark:bg-indigo-900/10 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-violet-500/5 dark:bg-violet-900/10 rounded-full blur-[120px]"></div>
+        {/* Primary large orbs */}
+        <div className="absolute top-[-100px] left-[-100px] w-[700px] h-[700px] bg-indigo-500/20 dark:bg-indigo-600/25 rounded-full blur-[130px] animate-float"></div>
+        <div className="absolute top-[200px] right-[-150px] w-[600px] h-[600px] bg-violet-500/15 dark:bg-purple-600/20 rounded-full blur-[120px]" style={{animationDelay: '2s', animation: 'float 10s ease-in-out infinite'}}></div>
+        <div className="absolute bottom-[-50px] left-[30%] w-[500px] h-[500px] bg-pink-400/12 dark:bg-pink-600/18 rounded-full blur-[110px]" style={{animation: 'float 12s ease-in-out infinite', animationDelay: '4s'}}></div>
+        <div className="absolute bottom-[30%] right-[10%] w-[350px] h-[350px] bg-cyan-400/10 dark:bg-cyan-500/15 rounded-full blur-[90px]" style={{animation: 'float 9s ease-in-out infinite', animationDelay: '1s'}}></div>
+        {/* Subtle grid overlay */}
+        <div className="absolute inset-0 opacity-[0.015] dark:opacity-[0.03]" style={{backgroundImage: 'linear-gradient(rgba(99,102,241,1) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,1) 1px, transparent 1px)', backgroundSize: '60px 60px'}}></div>
       </div>
 
       {/* Premium Navbar */}
-      <nav className="relative z-50 px-6 py-5 bg-white/70 dark:bg-[#0a0c10]/70 backdrop-blur-2xl border-b border-gray-100 dark:border-white/5 sticky top-0">
+      <nav className="relative z-50 px-6 py-4 bg-white/60 dark:bg-[#0a0c10]/60 backdrop-blur-2xl border-b border-indigo-100/80 dark:border-indigo-500/10 sticky top-0" style={{boxShadow: '0 1px 40px rgba(99,102,241,0.08)'}}>
         <div className="max-w-[1440px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4 group cursor-pointer" aria-label="CurrencyEx Official Branding">
-            <div className="p-3 bg-indigo-600 rounded-2xl shadow-[0_0_20px_rgba(79,70,229,0.2)] transition-transform group-hover:rotate-12">
+            <div className="p-3 rounded-2xl transition-transform group-hover:rotate-12 group-hover:scale-110" style={{background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%)', boxShadow: '0 8px 25px rgba(99,102,241,0.45)'}}>
               <Sparkles className="text-white" size={22} fill="currentColor" aria-hidden="true" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter leading-none">
-                Currency<span className="text-indigo-600">Ex</span>
+              <h1 className="text-2xl font-black tracking-tighter leading-none">
+                <span className="text-gray-900 dark:text-white">Currency</span><span style={{background: 'linear-gradient(135deg, #6366f1, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>Ex</span>
               </h1>
               <div className="flex items-center gap-2 mt-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
@@ -438,20 +443,20 @@ function App() {
 
           </div>
 
-          <div className="hidden lg:flex items-center gap-10">
-            <div className="flex items-center gap-4">
-              <Activity size={18} className="text-indigo-500" />
+          <div className="hidden lg:flex items-center gap-6">
+            <div className="flex items-center gap-3 bg-indigo-50 dark:bg-indigo-500/10 px-4 py-2.5 rounded-2xl border border-indigo-100 dark:border-indigo-500/20">
+              <Activity size={16} className="text-indigo-600 dark:text-indigo-400" />
               <div className="flex flex-col">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t.traders}</span>
-                <span className="text-sm font-black text-gray-900 dark:text-white tabular-nums">{liveUsers.toLocaleString()}</span>
+                <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">{t.traders}</span>
+                <span className="text-sm font-black text-indigo-700 dark:text-indigo-300 tabular-nums">{liveUsers.toLocaleString()}</span>
               </div>
             </div>
 
-            <div className="h-10 w-px bg-gray-200 dark:bg-gray-800"></div>
+            <div className="h-8 w-px bg-indigo-100 dark:bg-indigo-500/20"></div>
 
-            <div className="flex flex-col items-end">
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t.clock}</span>
-              <span className="text-sm font-black text-gray-900 dark:text-white tabular-nums">
+            <div className="flex flex-col items-end bg-violet-50 dark:bg-violet-500/10 px-4 py-2.5 rounded-2xl border border-violet-100 dark:border-violet-500/20">
+              <span className="text-[9px] font-black text-violet-400 uppercase tracking-widest">{t.clock}</span>
+              <span className="text-sm font-black text-violet-700 dark:text-violet-300 tabular-nums">
                 {currentDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </span>
             </div>

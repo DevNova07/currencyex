@@ -1,11 +1,34 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+  --gradient-gold: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+  --gradient-ocean: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  --gradient-emerald: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  --glow-indigo: 0 0 40px rgba(99, 102, 241, 0.35);
+  --glow-pink: 0 0 40px rgba(236, 72, 153, 0.25);
+  --glow-gold: 0 0 30px rgba(245, 158, 11, 0.3);
+}
 
 @layer utilities {
   .premium-card {
-    @apply bg-white dark:bg-[#12141c] rounded-[2.5rem] shadow-[0_25px_80px_-20px_rgba(0,0,0,0.06)] dark:shadow-[0_25px_80px_-20px_rgba(0,0,0,0.45)] border border-gray-100/50 dark:border-white/5 transition-all duration-500 overflow-hidden;
+    @apply bg-white/80 dark:bg-[#12141c]/90 rounded-[2.5rem] shadow-[0_25px_80px_-20px_rgba(99,102,241,0.15)] dark:shadow-[0_25px_80px_-20px_rgba(99,102,241,0.3)] border border-indigo-100/50 dark:border-indigo-500/10 transition-all duration-500 overflow-hidden backdrop-blur-xl;
   }
   .bg-obsidian {
-    @apply bg-[#fbfcff] dark:bg-[#0a0c10];
+    @apply bg-gradient-to-br from-[#f0f0ff] via-[#faf5ff] to-[#fff0f8] dark:from-[#06070f] dark:via-[#0a0c18] dark:to-[#0e0814];
+  }
+  .gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .glow-indigo {
+    box-shadow: var(--glow-indigo);
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_30px_90px_-15px_rgba(99,102,241,0.25)];
   }
 }
 
@@ -14,14 +37,47 @@
   100% { transform: translateX(-50%); }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(1deg); }
+  66% { transform: translateY(-10px) rotate(-1deg); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5); }
+  70% { transform: scale(1); box-shadow: 0 0 0 12px rgba(99, 102, 241, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 .animate-ticker {
   animation: ticker 60s linear infinite;
 }
 .animate-ticker:hover {
   animation-play-state: paused;
 }
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
 
 body {
-  @apply antialiased text-slate-900 dark:text-slate-100;
+  @apply antialiased;
+  font-family: 'Inter', system-ui, sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
