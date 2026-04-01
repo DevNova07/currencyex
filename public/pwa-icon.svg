@@ -1,6 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="100" fill="#2563eb" />
-  <text x="50%" y="45%" font-family="Arial, sans-serif" font-weight="900" font-size="200" fill="white" text-anchor="middle" dominant-baseline="middle">C</text>
-  <text x="50%" y="75%" font-family="Arial, sans-serif" font-weight="900" font-size="120" fill="#93c5fd" text-anchor="middle" dominant-baseline="middle">Ex</text>
-  <circle cx="256" cy="256" r="230" fill="none" stroke="white" stroke-width="20" opacity="0.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Institutional Indigo Background with Premium Rounding -->
+  <rect width="512" height="512" rx="140" fill="#4f46e5" />
+  
+  <g fill="#ffffff">
+    <!-- Main Institutional Sparkle (Star) -->
+    <path d="M256 120c0 75.1-60.9 136-136 136 75.1 0 136 60.9 136 136 0-75.1 60.9-136 136-136-75.1 0-136-60.9-136-136z" />
+    
+    <!-- Secondary Dynamic Sparkle (Top Right) -->
+    <path d="M385 145c0 28-22 50-50 50 28 0 50 22 50 50 0-28 22-50 50-50-28 0-50-22-50-50z" />
+    
+    <!-- Global Presence Dot (Bottom Left) -->
+    <circle cx="165" cy="375" r="30" />
+  </g>
 </svg>
