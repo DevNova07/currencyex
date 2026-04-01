@@ -519,6 +519,18 @@ function App() {
 
       <LiveTicker t={t} />
 
+      {/* Top Professional Leaderboard Ad Slot */}
+      <div className="max-w-4xl mx-auto px-6 pt-8">
+        <div className="w-full bg-gray-50/50 dark:bg-white/5 border border-gray-100 dark:border-white/5 rounded-2xl h-24 flex flex-col items-center justify-center relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-1">
+            <span className="text-[7px] font-black text-gray-400 uppercase tracking-widest">ADVERTISEMENT</span>
+          </div>
+          <div className="text-[10px] font-black text-indigo-500/40 uppercase tracking-[0.2em] group-hover:scale-110 transition-transform">
+            Premium Ad Placement Area (728x90)
+          </div>
+        </div>
+      </div>
+
       <main className="relative z-10 max-w-4xl mx-auto px-6 py-12">
         <div className="space-y-12">
           <CurrencyConverter
@@ -532,6 +544,16 @@ function App() {
             isFavorite={favorites.some(f => f.from === fromCurrency && f.to === toCurrency)}
             t={t}
           />
+
+          {/* Mid-Content Ad Slot */}
+          <div className="w-full bg-gray-50/50 dark:bg-white/5 border border-gray-100 dark:border-white/5 rounded-3xl h-48 flex flex-col items-center justify-center relative group">
+            <div className="absolute top-2 right-4">
+              <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">ADVERTISEMENT</span>
+            </div>
+            <div className="text-[11px] font-black text-indigo-500/30 uppercase tracking-[0.3em] text-center max-w-xs">
+              Institutional Grade Display Ad (Full Width)
+            </div>
+          </div>
 
           <HistoryChart
             data={historyData}
@@ -659,6 +681,16 @@ function App() {
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+
+          {/* Footer Banner Ad Slot */}
+          <div className="mt-20 w-full bg-gray-50/50 dark:bg-white/5 border border-gray-100 dark:border-white/5 rounded-3xl h-32 flex flex-col items-center justify-center relative group overflow-hidden">
+            <div className="absolute top-2 right-4">
+              <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">ADVERTISEMENT</span>
+            </div>
+            <div className="text-[10px] font-black text-indigo-500/20 uppercase tracking-[0.4em] text-center px-6">
+              Precision Targeted Financial Banner (970x250)
             </div>
           </div>
 
