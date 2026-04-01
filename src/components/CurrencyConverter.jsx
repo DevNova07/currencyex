@@ -25,8 +25,8 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
     setToCurrency(fromCurrency);
   };
 
-  const exchangeRate = data ? data.rates[toCurrency] : 1;
-  const effectiveRate = includeMarkup ? exchangeRate * 1.02 : exchangeRate;
+  const exchangeRate = (data && data.rates && data.rates[toCurrency]) ? data.rates[toCurrency] : null;
+  const effectiveRate = exchangeRate != null ? (includeMarkup ? exchangeRate * 1.02 : exchangeRate) : null;
   const lastUpdated = data ? new Date(data.date).toLocaleDateString() : '';
 
   return (
@@ -143,6 +143,7 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
                 
                 <button 
                   onClick={() => {
+                    if (exchangeRate == null) return;
                     const alerts = JSON.parse(localStorage.getItem('price_alerts') || '[]');
                     const newAlert = { from: fromCurrency, to: toCurrency, target: exchangeRate, date: new Date().toISOString() };
                     localStorage.setItem('price_alerts', JSON.stringify([...alerts, newAlert]));
@@ -159,7 +160,7 @@ const CurrencyConverter = ({ fromCurrency, toCurrency, setFromCurrency, setToCur
             <div className="mt-8 flex flex-wrap items-center gap-5 text-[11px] text-gray-400 dark:text-gray-500 font-extrabold uppercase tracking-widest">
               <div className="flex items-center gap-2">
                 <RefreshCcw size={14} className={loading ? 'animate-spin' : ''} />
-                <span>{t.rate}: 1.00 {fromCurrency} = {effectiveRate.toFixed(4)} {toCurrency}</span>
+                <span>{t.rate}: 1.00 {fromCurrency} = {effectiveRate != null ? effectiveRate.toFixed(4) : '...'} {toCurrency}</span>
               </div>
               <div className="flex items-center gap-2 border-l border-gray-200 dark:border-gray-800 pl-5">
                 <Clock size={14} />
