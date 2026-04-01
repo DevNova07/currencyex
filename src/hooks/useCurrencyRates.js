@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../utils/api';
+import { fetchRates } from '../utils/api';
 
 // Simple in-memory cache corresponding to base currency
 const cache = {};
@@ -10,7 +10,7 @@ export const useCurrencyRates = (baseCurrency) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchRates = async () => {
+    const loadRates = async () => {
       setLoading(true);
       setError(null);
       
@@ -22,12 +22,9 @@ export const useCurrencyRates = (baseCurrency) => {
       }
 
       try {
-        const response = await api.get('/latest', {
-          params: { base: baseCurrency }
-        });
+        const responseData = await fetchRates('/latest', { base: baseCurrency });
         
-        if (response.data && response.data.success) {
-          const responseData = response.data;
+        if (responseData && responseData.success) {
           // Save to cache
           cache[baseCurrency] = {
             timestamp: Date.now(),
@@ -47,7 +44,7 @@ export const useCurrencyRates = (baseCurrency) => {
     };
 
     if (baseCurrency) {
-      fetchRates();
+      loadRates();
     }
   }, [baseCurrency]);
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../utils/api';
+import { fetchRates } from '../utils/api';
 import { format, subDays } from 'date-fns';
 
 export const useRateHistory = (fromCurrency, toCurrency, days = 7) => {
@@ -16,19 +16,17 @@ export const useRateHistory = (fromCurrency, toCurrency, days = 7) => {
         const startDate = format(subDays(new Date(), days), 'yyyy-MM-dd');
         const endDate = format(new Date(), 'yyyy-MM-dd');
         
-        const response = await api.get('/timeseries', {
-          params: { 
+        const responseData = await fetchRates('/timeseries', { 
             start_date: startDate, 
             end_date: endDate,
             base: fromCurrency,
             symbols: toCurrency
-          }
         });
         
-        if (response.data && response.data.success && response.data.rates) {
-          const chartData = Object.keys(response.data.rates).sort().map(date => ({
+        if (responseData && responseData.success && responseData.rates) {
+          const chartData = Object.keys(responseData.rates).sort().map(date => ({
             date: format(new Date(date), 'MMM dd'),
-            rate: response.data.rates[date][toCurrency]
+            rate: responseData.rates[date][toCurrency]
           }));
           setData(chartData);
         } else {

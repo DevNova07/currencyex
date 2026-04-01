@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, ExternalLink, TrendingUp, Globe, Newspaper, Info, History, User as UserIcon, Activity, Zap, X } from 'lucide-react';
+import { Sparkles, ExternalLink, Globe, Languages, Info, History, User as UserIcon, Activity, Zap, X } from 'lucide-react';
 import CurrencyConverter from './components/CurrencyConverter';
 import HistoryChart from './components/HistoryChart';
 import LiveTicker from './components/LiveTicker';
@@ -8,6 +8,7 @@ import AIChatbot from './components/AIChatbot';
 import AuthModal from './components/AuthModal';
 import SavedFavorites from './components/SavedFavorites';
 import PortfolioTracker from './components/PortfolioTracker';
+import AdminPanel from './components/AdminPanel';
 import EconomicCalendar from './components/EconomicCalendar';
 import MultiCurrencyGrid from './components/MultiCurrencyGrid';
 import CurrencyStrength from './components/CurrencyStrength';
@@ -215,6 +216,8 @@ function App() {
     return false;
   });
 
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
@@ -374,29 +377,24 @@ function App() {
           
           {/* Mobile Actions Overlay */}
           <div className="lg:hidden flex items-center gap-3">
-            {/* Quick Actions Bar - Mobile */}
-            <div className="flex items-center gap-1 bg-gray-50/50 dark:bg-[#12141c] p-1 rounded-2xl border border-gray-100 dark:border-white/5">
-              <button className="p-2 text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all">
-                <Activity size={16} />
-              </button>
-              <button className="p-2 text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all">
-                <TrendingUp size={16} />
-              </button>
-              <button className="p-2 text-gray-400 hover:text-indigo-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all">
-                <Newspaper size={16} />
-              </button>
-            </div>
+
 
             <div className="relative">
               <button 
                 onClick={() => setShowLangMenu(!showLangMenu)}
-                className={`p-2.5 rounded-2xl transition-all active:scale-95 border ${
+                className={`flex items-center gap-2 pl-3 pr-4 py-2.5 rounded-2xl transition-all active:scale-95 border ${
                   showLangMenu 
                     ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/30' 
-                    : 'bg-gray-50/50 dark:bg-[#12141c] text-indigo-500 border-gray-100 dark:border-white/5'
+                    : 'bg-gray-50/50 dark:bg-[#12141c] text-indigo-500 border-gray-100 dark:border-white/5 hover:border-indigo-200 dark:hover:border-white/10'
                 }`}
               >
-                <Globe size={18} />
+                <div className={`p-1.5 rounded-lg ${showLangMenu ? 'bg-white/20' : 'bg-indigo-500/10'}`}>
+                  <Languages size={14} className={showLangMenu ? 'text-white' : 'text-indigo-500'} />
+                </div>
+                <span className={`text-[10px] font-black uppercase tracking-widest ${showLangMenu ? 'text-white' : 'text-gray-500'}`}>
+                  {language}
+                </span>
+                <div className={`w-1 h-1 rounded-full ${showLangMenu ? 'bg-indigo-200' : 'bg-indigo-500'} animate-pulse`}></div>
               </button>
               
               {showLangMenu && (
@@ -459,19 +457,7 @@ function App() {
 
             <div className="h-10 w-px bg-gray-200 dark:bg-gray-800"></div>
 
-            {/* Quick Actions Bar - PC */}
-            <div className="flex items-center gap-1 bg-gray-50 dark:bg-[#12141c] p-1.5 rounded-2xl border border-gray-100 dark:border-white/5">
-              <button className="flex items-center gap-2 px-3 py-2 text-indigo-600 bg-white dark:bg-indigo-500/10 rounded-xl shadow-sm border border-transparent dark:border-indigo-500/20">
-                <Activity size={16} />
-                <span className="text-[10px] font-black uppercase tracking-widest">{t.live}</span>
-              </button>
-              <button className="p-2 text-gray-400 hover:text-indigo-500 hover:bg-white dark:hover:bg-gray-800 rounded-xl transition-all" title={t.history}>
-                <TrendingUp size={16} />
-              </button>
-              <button className="p-2 text-gray-400 hover:text-indigo-500 hover:bg-white dark:hover:bg-gray-800 rounded-xl transition-all" title={t.ext_intel}>
-                <Newspaper size={16} />
-              </button>
-            </div>
+
 
             <div className="relative">
               <button 
@@ -527,24 +513,6 @@ function App() {
             </div>
 
 
-            {user ? (
-              <div className="flex items-center gap-4 pl-4 border-l border-gray-200 dark:border-gray-800">
-                <button 
-                  onClick={() => setUser(null)}
-                  className="w-11 h-11 rounded-3xl bg-linear-to-br from-indigo-600 to-violet-700 border-2 border-white dark:border-gray-800 shadow-xl flex items-center justify-center text-white font-black text-sm"
-                >
-                  {user?.name?.charAt(0)?.toUpperCase()}
-                </button>
-              </div>
-            ) : (
-              <button 
-                onClick={() => setShowAuthModal(true)}
-                className="px-8 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-xl hover:scale-105 transition-all flex items-center gap-3"
-              >
-                <UserIcon size={16} />
-                {t.access}
-              </button>
-            )}
           </div>
         </div>
       </nav>
@@ -694,6 +662,54 @@ function App() {
             </div>
           </div>
 
+          {/* SEO Content & Market Insights Section */}
+          <div className="mt-20 py-16 border-t border-gray-100 dark:border-white/5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 text-sm text-gray-500 dark:text-gray-400 font-medium">
+              <div className="space-y-6">
+                 <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-gray-900 dark:text-white">Precision Currency Converter</h2>
+                 <p className="leading-relaxed">
+                   Use our free <strong className="text-indigo-600 font-bold">currency converter</strong> and <strong>Exchange Rate and Currency Converter Tool</strong> to get accurate and reliable <strong className="text-gray-900 dark:text-white">foreign exchange rates</strong>. 
+                   Whether you are tracking <strong className="text-indigo-600 font-bold">USD to INR</strong> or searching for the <strong className="text-gray-900 dark:text-white">exchange rate today</strong>, 
+                   our platform provides real-time data for <strong className="text-gray-900 dark:text-white">dollar rate today India</strong> and global <strong>currency exchange</strong> markets.
+                 </p>
+                 <p className="leading-relaxed">
+                   Looking for <strong className="text-indigo-600 font-bold">dollar to rupee</strong> or <strong>1 dollar in rupees</strong>? We offer a comprehensive 
+                   <strong className="text-gray-900 dark:text-white">INR to USD calculator</strong> and <strong>best currency converter website</strong> experience with 
+                   millisecond latency. Stay updated with <strong className="text-indigo-600 font-bold">USD to INR today</strong> and <strong>rupee to dollar</strong> fluctuations.
+                 </p>
+              </div>
+
+              <div className="space-y-6">
+                <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-gray-900 dark:text-white">Global Market Intelligence</h2>
+                <p className="leading-relaxed">
+                   Get the latest <strong className="text-indigo-600 font-bold">gold rate today India</strong> and <strong>gold price in USD</strong>. We track 
+                   <strong className="text-gray-900 dark:text-white">silver rate today</strong> alongside <strong className="text-indigo-600 font-bold">USD to INR live rate today</strong> 
+                   to ensure you have the full market picture. Our <strong className="text-gray-900 dark:text-white">live forex currency converter</strong> is the preferred 
+                   choice for institutional <strong>currency exchange India</strong>.
+                </p>
+                <p className="leading-relaxed">
+                   Easily calculate conversions for <strong className="text-indigo-600 font-bold">INR to AED</strong>, <strong>INR to SAR</strong>, and 
+                   <strong className="text-gray-900 dark:text-white">pound to INR</strong>. For European markets, use our specialized 
+                   <strong className="text-indigo-600 font-bold">euro to USD money converter</strong> for precise financial planning.
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-gray-900 dark:text-white">Crypto & Digital Assets</h2>
+                <p className="leading-relaxed">
+                   Convert digital assets with our <strong className="text-indigo-600 font-bold">crypto to INR converter</strong>. Track 
+                   <strong className="text-gray-900 dark:text-white">bitcoin to INR</strong> and <strong>USDT to INR</strong> rates in real-time. 
+                   Whether it's <strong className="text-indigo-600 font-bold">100 dollar in rupees today</strong> or high-volume <strong>forex rates</strong>, 
+                   our <strong>free currency converter online</strong> delivers institutional-grade accuracy.
+                </p>
+                <p className="leading-relaxed italic text-[12px] opacity-75">
+                   Powered by <strong>hcurrency-converter</strong> and real-time <strong>currency converter real time API</strong> nodes 
+                   providing <strong className="text-indigo-600 font-bold">live currency rates</strong> across all global liquidity pools.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Bottom Bar: Status and Copyright */}
           <div className="pt-12 border-t border-gray-100 dark:border-white/5 flex flex-col lg:flex-row items-center justify-between gap-8">
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8">
@@ -716,8 +732,15 @@ function App() {
               </div>
             </div>
 
-            <div className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">
-              © 2026 CurrencyEx • {t.rights}
+            <div className="text-[11px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1.5">
+              © 
+              <button 
+                onClick={() => setShowAdminPanel(true)}
+                className="hover:text-indigo-500 transition-colors cursor-default active:scale-95"
+              >
+                2026
+              </button>
+              CurrencyEx • {t.rights}
             </div>
           </div>
         </div>
@@ -728,6 +751,11 @@ function App() {
         onClose={() => setShowAuthModal(false)} 
         onLogin={(userData) => setUser(userData)}
         t={t}
+      />
+
+      <AdminPanel 
+        isOpen={showAdminPanel}
+        onClose={() => setShowAdminPanel(false)}
       />
     </div>
   );
